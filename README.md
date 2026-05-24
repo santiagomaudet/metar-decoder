@@ -103,13 +103,79 @@ METAR SAEZ 241300Z 09004KT 5000 BR OVC011 11/10 Q1024 NOSIG
 .
 ├── app.py                  # Flask application
 ├── metar_decoder.py        # METAR fetching and parsing logic
+├── test_app.py             # Unit tests for Flask app
 ├── requirements.txt        # Python dependencies
 ├── templates/
 │   └── index.html         # Web interface template
 ├── static/
 │   └── style.css          # Styling
+├── TESTING_GUIDE.md       # Detailed testing documentation
+├── CLAUDE.md              # Project instructions for Claude Code
 └── README.md              # This file
 ```
+
+## Testing
+
+This project includes comprehensive unit tests to ensure reliability and correctness.
+
+### Running Tests
+
+1. **Install testing dependencies** (if not already installed)
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run all tests**
+   ```bash
+   pytest test_app.py -v
+   ```
+
+3. **Run with coverage report**
+   ```bash
+   pytest test_app.py --cov=app --cov-report=html
+   ```
+   Then open `htmlcov/index.html` in your browser to see detailed coverage.
+
+4. **Run a specific test**
+   ```bash
+   pytest test_app.py::TestMetarApp::test_successful_metar_fetch_kjfk -v
+   ```
+
+### Test Coverage
+
+The test suite includes **15 test cases** covering:
+
+- ✅ **Input Validation** - Empty codes, incorrect lengths, whitespace handling
+- ✅ **Successful METAR Fetches** - Multiple airport scenarios with different weather conditions
+- ✅ **Error Handling** - Network errors, parsing failures, missing data
+- ✅ **Weather Scenarios** - Clear skies, rain, wind gusts, fog, thunderstorms
+- ✅ **Edge Cases** - Special characters, case normalization
+
+### Understanding the Tests
+
+The tests use **mocking** to isolate the Flask application from external dependencies. This means:
+
+- 🎭 **No real API calls** - Tests run instantly without internet
+- 🎯 **Controlled scenarios** - We control exactly what data is returned
+- 🛡️ **Safe error testing** - Can simulate failures without breaking anything
+- ⚡ **Fast execution** - Complete test suite runs in seconds
+
+**Example test with mock data:**
+```python
+@patch('app.fetch_metar')
+def test_successful_metar_fetch(mock_fetch):
+    # Control what the mock returns
+    mock_fetch.return_value = "KJFK 241851Z 31008KT 10SM FEW250 M04/M17 A3034"
+    
+    # Make request
+    response = client.post('/', data={'icao_code': 'KJFK'})
+    
+    # Verify results
+    assert response.status_code == 200
+    assert b'KJFK' in response.data
+```
+
+For a detailed explanation of how mocking works and how to write your own tests, see **[TESTING_GUIDE.md](TESTING_GUIDE.md)**.
 
 ## METAR Format Reference
 

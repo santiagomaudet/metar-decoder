@@ -29,6 +29,24 @@ Test with these sample airport codes:
 - **YSSY** - Sydney Airport
 - **EDDF** - Frankfurt Airport
 
+### Running Unit Tests
+```bash
+# Run all tests
+pytest test_app.py -v
+
+# Run with coverage
+pytest test_app.py --cov=app --cov-report=html
+
+# Run specific test
+pytest test_app.py::TestMetarApp::test_successful_metar_fetch_kjfk -v
+```
+
+**Test Philosophy:**
+- `test_app.py` uses mocking to isolate Flask routes from external dependencies
+- Tests verify input validation, error handling, and response rendering
+- Mock METAR data allows testing without real API calls
+- See `TESTING_GUIDE.md` for detailed explanation of mocking concepts
+
 ## Architecture
 
 ### File Structure
@@ -36,11 +54,14 @@ Test with these sample airport codes:
 .
 ├── app.py                  # Flask application with single route
 ├── metar_decoder.py        # METAR fetching, parsing, and decoding
-├── requirements.txt        # Python dependencies
+├── test_app.py             # Unit tests with mocked dependencies
+├── requirements.txt        # Python dependencies (includes pytest)
 ├── templates/
 │   └── index.html         # Single-page UI
-└── static/
-    └── style.css          # Styling
+├── static/
+│   └── style.css          # Styling
+├── TESTING_GUIDE.md       # Detailed testing and mocking tutorial
+└── CLAUDE.md              # This file
 ```
 
 ### Core Components
