@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>METAR Reader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>METAR Weather Reader</h1>
+        <p class="subtitle">Enter an airport code to decode current weather conditions</p>
+
+        <form method="POST" class="metar-form">
+            <div class="form-group">
+                <label for="icao_code">Airport Code (ICAO):</label>
+                <input
+                    type="text"
+                    id="icao_code"
+                    name="icao_code"
+                    placeholder="e.g., KJFK, EGLL, YSSY"
+                    maxlength="4"
+                    pattern="[A-Za-z]{4}"
+                    required
+                    autocomplete="off">
+            </div>
+            <button type="submit">Get Weather</button>
+        </form>
+
+        {% if error %}
+        <div class="error-box">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        {% if raw_metar %}
+        <div class="results">
+            <h2>Weather Report for {{ icao_code }}</h2>
+
+            <div class="raw-metar">
+                <h3>Raw METAR:</h3>
+                <code>{{ raw_metar }}</code>
+            </div>
+
+            <div class="decoded-metar">
+                <h3>Decoded Weather:</h3>
+                <ul>
+                    {% for line in decoded_lines %}
+                    <li>{{ line }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="info-box">
+            <h3>About METAR</h3>
+            <p>
+                METAR (Meteorological Aerodrome Report) is a standardized format for reporting
+                weather information at airports worldwide. This tool fetches the latest METAR
+                data and translates it into plain English using metric units.
+            </p>
+            <p><strong>Examples of airport codes:</strong></p>
+            <ul>
+                <li><strong>KJFK</strong> - New York JFK</li>
+                <li><strong>EGLL</strong> - London Heathrow</li>
+                <li><strong>YSSY</strong> - Sydney Airport</li>
+                <li><strong>EDDF</strong> - Frankfurt Airport</li>
+                <li><strong>RJTT</strong> - Tokyo Haneda</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
